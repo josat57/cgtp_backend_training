@@ -93,4 +93,26 @@ class Schema {
         )";
         return $this->conn->query($sql);
     }
+
+    /**
+     * Session table creation
+     * * @return bool True on success, false on failure
+     */
+    public function createSessionsTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS sessions (
+            id INT(11) AUTO_INCREMENT PRIMARY KEY,
+            user_id INT(11) NOT NULL,
+            session_id VARCHAR(255) NOT NULL,
+            session_start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            session_end_time TIMESTAMP NULL DEFAULT NULL,
+            session_token VARCHAR(255) NOT NULL,
+            session_status ENUM('active', 'inactive') DEFAULT 'active',
+            UNIQUE (session_id),
+            UNIQUE (session_token),
+            ip_address VARCHAR(45) NOT NULL,
+            user_agent TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )";
+        return $this->conn->query($sql);
+    }
 }

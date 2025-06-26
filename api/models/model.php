@@ -33,21 +33,47 @@ class Models
         }
     }
     
-    public function logInUser($conn, $data) {
-        $stmt = $this->conn->prepare("SELECT * FROM users WHERE email = ?");
-        $stmt->bind_param("s", $data->email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            if(password_verify($data->password, $row["password"])) {
-                return true;
+
+    /**
+     * Log in a user with email and password
+     * @param array $data Contains 'email' and 'password'
+     * @return array Returns an array with status code and user data if login is successful, or an error message if not.
+     * @throws Exception If the user is not found or the password is incorrect.
+     */
+    public function logInUser($data) {
+        $result = self::$crud->findByEmail("users", $data["email"]);
+        if (is_array($result) && isset($result['email'])){
+            $hashedPassword = $result['password'];
+            if (password_verify($data["password"], $hashedPassword)) {
+                return ['statuscode' => 200, 'data'=>$result]; // Login successful
             } else {
-                return false;
+                return ['statuscode' => 404, 'data' => []]; // Invalid password
             }
         } else {
-            return false;
+            return ['statuscode' => 404, 'data' => []]; // User not found
+        }
+    }
+
+    /**
+     * Satrt a session for the user
+     * @param array $userData Contains user data to be stored in the session
+     * @return string|array Returns a JSON response with the session data or an error message.
+     * @throws Exception If the session cannot be started.
+     */
+    public function startSession($userData) {
+       $result = self::$crud->create("sessions", $userData);
+       if ($result) {
+            return [
+                'statuscode' => 200,
+                'status' => 'Session started successfully.',
+                'data' => $userData
+            ];
+       } else {
+            return [
+                'statuscode' => 500,
+                'status' => 'Failed to start session.',
+                'data' => []
+            ];
         }
     }
 }

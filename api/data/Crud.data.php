@@ -29,9 +29,22 @@ class Crud extends DBConfig {
     {
         self::$db = self::connect();
         $this->schemas = new Schema(self::$db);
-        // Optionally, you can create tables here if they don't exist
-        // $this->schemas->createUsersTable();
-        // $this->schemas->createPostsTable();  
+        $this->createSchemas();
+    }
+
+    /**
+     * Create schemas
+     * * @return void
+     * * This method can be used to create database schemas if needed.
+     * * It can be called after the class is instantiated.
+     */
+    public function createSchemas() {
+        // You can call schema creation methods here
+        $this->schemas->createUsersTable();
+        $this->schemas->createPostsTable();
+        $this->schemas->createCommentsTable();
+        $this->schemas->createLikesTable();
+        $this->schemas->createSessionsTable();
     }
 
     /**
@@ -111,7 +124,7 @@ class Crud extends DBConfig {
         $sql = "SELECT " . implode(", ", $fields) . " FROM $table WHERE id = ?";
         $stmt = self::$db->prepare($sql);
         $stmt->execute([$id]);
-        if ($stmt->num_rows == 1) {
+        if ($stmt->rowCount() == 1) {
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } else {
             return false; // No record found or multiple records found
@@ -131,7 +144,7 @@ class Crud extends DBConfig {
         $sql = "SELECT " . implode(", ", $fields) ." FROM $table WHERE email = ?";
         $stmt = self::$db->prepare($sql);
         $stmt->execute([$email]);
-        if ($stmt && $stmt->num_rows > 0) {
+        if ($stmt && $stmt->rowCount() > 0) {
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return $result;
         } else {
@@ -192,8 +205,7 @@ class Crud extends DBConfig {
         $stmt = self::$db->prepare($sql);
         $values = array_values($conditions);
         $stmt->execute($values);
-        $stmt->bind_result($count);
-        $stmt->fetch();
+        $count = $stmt->fetchColumn();
         return $count > 0; // Returns true if count is greater than 0
     }
 }
