@@ -17,7 +17,8 @@ function authRoutes($endpoint, $data, $path)
             $response = getClassInstance($endpoint, $path, $data);
             break;
         case 'login':
-            $response = getClassInstance($endpoint, $path, $data);
+
+            $response = getClassInstance($endpoint, $path."Controller", $data);
             break;
         case 'get_users':
             $response = "List of All users.";
@@ -35,7 +36,6 @@ function getClassInstance($endpoint, $path, $data)
     $className = ucfirst($path);
     // die(var_dump($className));
     $methodName = $endpoint;
-    
     if (!class_exists($className)) {
         return "Class not found.";
     }

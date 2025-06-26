@@ -68,21 +68,24 @@ class AuthController {
             $data = $validate["data"];
             $result = $this->model->loginUser($data);
             if ($result["statuscode"] === 200) {
-                if (!$this->startSession($result)) {
+                $user = $result["data"];
+                $session = $this->startSession(['user_id' => $user["id"]]);
+                if (!$session["status"]) {
                     $response = $this->utility->jsonResponse(
                         500,
-                        "Failed to login session.",
+                        "Failed to login.",
                         []
                     );
                 } else {
                     $session_data = [
-                        'id' => $_SESSION['id'],
-                        'first_name' => $_SESSION['first_name'],
-                        'last_name' => $_SESSION['last_name'],
-                        'email' => $_SESSION['email'],
-                        'phone' => $_SESSION['phone'],
-                        'session_id' => $_SESSION['session_id'],
-                        'session_start_time' => time(),
+                        'id' => $user['id'],
+                        'first_name' => $user['first_name'],
+                        'last_name' => $user['last_name'],
+                        'email' => $user['email'],
+                        'phone' => $user['phone'],
+                        'session_id' => $session["data"]['session_id'],
+                        'session_start_time' => $session["data"]["session_start_time"],
+                        'session_token' => $session["data"]["session_token"]
                     ];
                     $response = $this->utility->jsonResponse(
                         200,
@@ -105,22 +108,31 @@ class AuthController {
      * Start session
      * @return string|array
      */
-    public function startSession($session_data): string|array
+    public function startSession($session): string|array
     {
-        $result = $this->model->startSession("sessions", $session_data);
+        session_start();
+        $session["session_id"] = session_id(); // Store session ID
+        $session["user_agent"] = $_SERVER["HTTP_USER_AGENT"];
+        $session["ip_address"] = $_SERVER["REMOTE_ADDR"];
+        $session["session_token"] = bin2hex(random_bytes(32)); // Generate a secure session token
+        $session["session_status"] = "active"; // Set session status to active
+        $session["session_start_time"] = date("Y-m-d H:i:s", time());
+
+        $result = $this->model->startSession($session);
         if (!$result) {
-            return false;
+            return ['status' => false];
         } else {
-            session_start();
             $_SESSION = [
-                'id' => $session_data['data']['id'],
-                'first_name' => $session_data['data']['first_name'],
-                'last_name' => $session_data['data']['last_name'],
-                'email' => $session_data['data']['email'],
-                'phone' => $session_data['data']['phone'],
+                // 'id' => $session['user_id'],
+                // 'first_name' => $session['first_name'],
+                // 'last_name' => $session['last_name'],
+                // 'email' => $session['email'],
+                // 'phone' => $session['phone'],
                 'session_id' => session_id(),
+                'session_start_time' => $session["session_start_time"],
+                'session_token' => $session["session_token"]
             ];
-            return true;
+            return ['status' =>true, 'data' => $_SESSION];
         }
     }
 
@@ -133,9 +145,9 @@ class AuthController {
      */
     public function isLoggedIn(): string|array
     {
-        session_start();
-        if (isset($_SESSION['id']) || isset($_SESSION['session_id'])) {
-            $result = $this->model->getSessionById("sessions", $_SESSION['id']);
+        $this->data;
+        if (isset($data['id']) || isset($data['session_id'])) {
+            $result = $this->model->getSessionById("sessions", $data['id']);
             if (!$result) {
                 session_destroy(); // Session is invalid, destroy it
                 $_SESSION = []; // Clear session data

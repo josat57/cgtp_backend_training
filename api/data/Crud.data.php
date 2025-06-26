@@ -38,7 +38,7 @@ class Crud extends DBConfig {
      * * This method can be used to create database schemas if needed.
      * * It can be called after the class is instantiated.
      */
-    public function createSchemas() {
+    private function createSchemas() {
         // You can call schema creation methods here
         $this->schemas->createUsersTable();
         $this->schemas->createPostsTable();

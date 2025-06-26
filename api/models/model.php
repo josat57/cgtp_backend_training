@@ -87,10 +87,13 @@ class Models
     {
         $result = self::$crud->findOne("sessions", ['session_id' => $sessionId], ['*']);
         if (is_array($result)) {
+            $get_user = self::$crud->findOne("users", ['id' => $result["id"]]);
+            $user = (is_array($get_user)) ? $get_user : [];
             return [
                 'statuscode' => 200,
                 'status' => 'Session found.',
-                'data' => $result
+                'data' => $user,
+                'session' => $result
             ];
         } else {
             return [
