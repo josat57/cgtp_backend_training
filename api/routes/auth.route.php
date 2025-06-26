@@ -17,7 +17,7 @@ function authRoutes($endpoint, $data, $path)
             $response = getClassInstance($endpoint, $path, $data);
             break;
         case 'login':
-            $response = "Log in successful!";
+            $response = getClassInstance($endpoint, $path, $data);
             break;
         case 'get_users':
             $response = "List of All users.";

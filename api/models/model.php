@@ -76,4 +76,28 @@ class Models
             ];
         }
     }
+
+    /** 
+     * Get session data by session ID
+     * @param string $sessionId The session ID to search for
+     * @return array Returns an array with session data if found, or an error message if not found.
+     * @throws Exception If the session ID is not provided or if the session cannot be found.
+     */
+    public function getSessionById($sessionId)
+    {
+        $result = self::$crud->findOne("sessions", ['session_id' => $sessionId], ['*']);
+        if (is_array($result)) {
+            return [
+                'statuscode' => 200,
+                'status' => 'Session found.',
+                'data' => $result
+            ];
+        } else {
+            return [
+                'statuscode' => 404,
+                'status' => 'Session not found.',
+                'data' => []
+            ];
+        }
+    }
 }

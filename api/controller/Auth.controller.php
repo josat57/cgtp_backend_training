@@ -21,6 +21,12 @@ class AuthController {
         $this->utility = new UtilityHelper();
     }
 
+    /**
+     * Register a new user
+     * 
+     * @return string|array
+     * This method validates the registration data and creates a new user if valid.
+     */
     public function register():string|array
     {
         $require = ["first_name", "last_name", "email", "phone", "password"];
@@ -46,6 +52,12 @@ class AuthController {
         return $respons;
     }
 
+    /**
+     * Log in a user
+     * 
+     * @return string|array
+     * This method validates the login credentials and starts a session if successful.
+     */
     public function login():string|array
     {
         $require = ["email", "password"];
@@ -110,5 +122,32 @@ class AuthController {
             ];
             return true;
         }
+    }
+
+    /**
+     * verify if user is logged in
+     * 
+     * @return string|array
+     * This method checks if a user is logged in by verifying the session.
+     * It returns true if the session is valid, otherwise false.
+     */
+    public function isLoggedIn(): string|array
+    {
+        session_start();
+        if (isset($_SESSION['id']) || isset($_SESSION['session_id'])) {
+            $result = $this->model->getSessionById("sessions", $_SESSION['id']);
+            if (!$result) {
+                session_destroy(); // Session is invalid, destroy it
+                $_SESSION = []; // Clear session data
+                $response = ['statuscode' => 404, 'status' => 'Session expired or invalid.']; // Session expired or invalid
+            } else {
+                $response = ['statuscode' => 200, 'status' => 'User is logged in.', 'data' => $result];
+            }
+        } else {
+            session_destroy(); // No session data, destroy it   
+            $_SESSION = []; // Clear session data
+            $response = ['statuscode' => 404, 'status' => 'No session']; // No session data, user is not logged in
+        }
+        return $response;
     }
 }
