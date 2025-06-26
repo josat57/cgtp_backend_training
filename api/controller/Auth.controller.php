@@ -1,5 +1,6 @@
 <?php
 require_once "../models/model.php";
+require_once "../helpers/Utility.helper.php";
 
 /**
  * Authentication Controller class
@@ -7,6 +8,7 @@ require_once "../models/model.php";
 class AuthController {
     private static $data;
     private $model;
+    private $utility;
 
     /**
      * Class Constructor
@@ -16,33 +18,31 @@ class AuthController {
     public function __construct($data = []) {
         self::$data = $data;
         $this->model = new Models();
+        $this->utility = new UtilityHelper();
     }
 
-    public function register():array
+    public function register():string|array
     {
         $require = ["first_name", "last_name", "email", "phone", "password"];
-        $validate = $this->validate(self::$data, $require);
-        if ($validate) {
-            return $validate;
+        $validate = $this->utility->validateFields(self::$data, $require);
+        if ($validate["error"]) {
+            return ['statuscode' => 401, 'status' => $validate['error_msg'], 'data' => []];
         } else {
-            $this->model->insertUser(self::$data);
-        }
-    }
-
-    private function validate($data, $require)
-    {
-        $error = [];
-        foreach ($data as $key => $values) {
-            if (in_array($key, $require) && empty($values)) {
-                $error[$key] = $key . " is required <br />";
+            $data = $validate["data"];
+            if ($this->model->createtUser($data)) {
+                $respons = $this->utility->jsonResponse(
+                    200,
+                    "User registered successfully.",
+                    $data
+                );
+            } else {
+                $respons = $this->utility->jsonResponse(
+                    404,
+                    "Failed to register user.",
+                    []
+                );
             }
         }
-
-        if (empty($error)) {
-            $data = htmlspecialchars($data);
-            return ["error" => false, "error_msg" => "Clean", "data"=>$data];
-        } else {
-            return ["error" => true, "error_msg" => $error, "data"=>""];
-        }
+        return $respons;
     }
 }
