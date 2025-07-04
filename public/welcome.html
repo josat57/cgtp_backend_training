@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; }
+        .container { max-width: 400px; margin: 60px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+        h2 { color: #007bff; }
+        .info { margin-top: 20px; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome!</h2>
+        <div class="info" id="userInfo"></div>
+    </div>
+    <script>
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user && user.username) {
+            document.getElementById('userInfo').textContent = `Hello, ${user.username}! Your registration was successful.`;
+        } else {
+            document.getElementById('userInfo').textContent = 'User information not found.';
+        }
+    </script>
+</body>
+</html> 

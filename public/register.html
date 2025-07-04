@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; }
+        .container { max-width: 400px; margin: 60px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        h2 { text-align: center; }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%; padding: 10px; margin: 8px 0 16px 0; border: 1px solid #ccc; border-radius: 4px;
+        }
+        button { width: 100%; padding: 10px; background: #007bff; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .error { color: red; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Register</h2>
+        <form id="registerForm">
+            <input type="text" id="username" placeholder="Username" required />
+            <input type="email" id="email" placeholder="Email" required />
+            <input type="password" id="password" placeholder="Password" required />
+            <button type="submit">Register</button>
+        </form>
+        <div class="error" id="errorMsg"></div>
+    </div>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('errorMsg').textContent = '';
+            var username = document.getElementById('username').value;
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', window.location.origin + '/book_api/public/register', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    var data;
+                    try {
+                        data = JSON.parse(xhr.responseText);
+                    } catch (err) {
+                        document.getElementById('errorMsg').textContent = 'Invalid server response.';
+                        return;
+                    }
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                        window.location.href = 'welcome.html';
+                    } else {
+                        document.getElementById('errorMsg').textContent = data.error || 'Registration failed.';
+                    }
+                }
+            };
+            xhr.onerror = function() {
+                document.getElementById('errorMsg').textContent = 'Network error.';
+            };
+            xhr.send(JSON.stringify({ username: username, email: email, password: password }));
+        });
+    </script>
+</body>
+</html> 
