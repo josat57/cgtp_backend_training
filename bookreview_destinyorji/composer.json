@@ -1,0 +1,22 @@
+{
+    "name": "user/book-review-api",
+    "description": "A simple REST API for books and reviews using PHP and MongoDB",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "User\\BookReviewApi\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "destinyOrji",
+            "email": "140476956+destinyOrji@users.noreply.github.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "mongodb/mongodb": "^2.0",
+        "firebase/php-jwt": "^6.11"
+    }
+}

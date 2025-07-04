@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Review API</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Book Review Platform</h1>
+            <div id="auth-status">
+                <span id="user-info">Not logged in</span>
+                <button id="logout-btn" class="hidden">Logout</button>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="auth">Login/Register</button>
+            <button class="tab-btn" data-tab="books">Books</button>
+            <button class="tab-btn" data-tab="admin" id="admin-tab">Admin</button>
+        </div>
+
+        <div class="tab-content">
+            <!-- Auth Tab -->
+            <div class="tab-pane active" id="auth">
+                <div class="auth-container">
+                    <div class="auth-form">
+                        <h2>Login</h2>
+                        <form id="login-form">
+                            <div class="form-group">
+                                <label for="login-email">Email</label>
+                                <input type="email" id="login-email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="login-password">Password</label>
+                                <input type="password" id="login-password" required>
+                            </div>
+                            <button type="submit" class="btn">Login</button>
+                        </form>
+                    </div>
+
+                    <div class="auth-form">
+                        <h2>Register</h2>
+                        <form id="register-form">
+                            <div class="form-group">
+                                <label for="register-first-name">First Name</label>
+                                <input type="text" id="register-first-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="register-last-name">Last Name</label>
+                                <input type="text" id="register-last-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="register-email">Email</label>
+                                <input type="email" id="register-email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="register-phone">Phone</label>
+                                <input type="tel" id="register-phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="register-password">Password</label>
+                                <input type="password" id="register-password" required>
+                            </div>
+                            <button type="submit" class="btn">Register</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Books Tab -->
+            <div class="tab-pane" id="books">
+                <div class="books-container">
+                    <div class="books-list">
+                        <h2>Available Books</h2>
+                        <div id="books-grid"></div>
+                    </div>
+
+                    <div class="book-form hidden" id="add-book-form">
+                        <h2>Add New Book</h2>
+                        <form id="book-form">
+                            <div class="form-group">
+                                <label for="book-title">Title</label>
+                                <input type="text" id="book-title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="book-author">Author</label>
+                                <input type="text" id="book-author" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="book-description">Description</label>
+                                <textarea id="book-description" rows="4" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="book-cover">Cover URL</label>
+                                <input type="url" id="book-cover">
+                            </div>
+                            <button type="submit" class="btn">Add Book</button>
+                        </form>
+                    </div>
+
+                    <div class="book-details hidden" id="book-details">
+                        <h2>Book Details</h2>
+                        <div id="book-info"></div>
+                        <div class="reviews-section">
+                            <h3>Reviews</h3>
+                            <div id="reviews-list"></div>
+                            <div class="add-review hidden" id="add-review-form">
+                                <h4>Add Review</h4>
+                                <form id="review-form">
+                                    <div class="form-group">
+                                        <label for="review-rating">Rating (1-5)</label>
+                                        <input type="number" id="review-rating" min="1" max="5" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="review-text">Review</label>
+                                        <textarea id="review-text" rows="3" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn">Submit Review</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Tab -->
+            <div class="tab-pane" id="admin">
+                <div class="admin-container">
+                    <h2>Admin Dashboard</h2>
+                    <div class="admin-stats">
+                        <div class="stat-card">
+                            <h3>Total Books</h3>
+                            <p id="total-books">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Total Reviews</h3>
+                            <p id="total-reviews">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Total Users</h3>
+                            <p id="total-users">0</p>
+                        </div>
+                    </div>
+                    <div class="admin-actions">
+                        <button id="add-book-btn" class="btn">Add New Book</button>
+                        <button id="manage-users-btn" class="btn">Manage Users</button>
+                    </div>
+                    <div class="admin-tables">
+                        <div class="admin-table hidden" id="users-table">
+                            <h3>Users</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-list"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
