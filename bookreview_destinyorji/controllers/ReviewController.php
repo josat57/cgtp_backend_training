@@ -62,7 +62,7 @@ function deleteReview($reviewId, $user)
     $db = require __DIR__ . '/../config/db.php';
     $reviews = $db->reviews;
 
-    // ✅ Find review
+    //  Find review
     $review = $reviews->findOne(['_id' => new MongoDB\BSON\ObjectId($reviewId)]);
     if (!$review) {
         http_response_code(404);
