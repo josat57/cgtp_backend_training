@@ -10,9 +10,9 @@ class Models
         $this->db = require __DIR__ . '/../config/db.php';
     }
 
-    // =======================
-    // ✅ USER FUNCTIONS
-    // =======================
+  
+    // USER FUNCTIONS
+  
 
     public function findUserByEmail($email)
     {
@@ -30,9 +30,9 @@ class Models
         return $this->db->users->findOne(['_id' => new MongoDB\BSON\ObjectId($id)]);
     }
 
-    // =======================
-    // ✅ BOOK FUNCTIONS
-    // =======================
+    
+    // BOOK FUNCTIONS
+    
 
     public function createBook($book)
     {
@@ -62,9 +62,9 @@ class Models
         return $this->db->books->deleteOne(['_id' => new MongoDB\BSON\ObjectId($id)]);
     }
 
-    // =======================
-    // ✅ REVIEW FUNCTIONS
-    // =======================
+    
+    //  REVIEW FUNCTIONS
+   
 
     public function addReview($review)
     {
