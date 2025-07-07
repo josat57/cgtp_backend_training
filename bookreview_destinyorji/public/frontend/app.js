@@ -26,14 +26,14 @@ const totalReviews = document.getElementById('total-reviews');
 const totalUsers = document.getElementById('total-users');
 const notification = document.getElementById('notification');
 
-// State
+
 let currentUser = null;
 let currentBook = null;
 let books = [];
 let reviews = [];
 let users = [];
 
-// Tab Navigation
+
 tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
