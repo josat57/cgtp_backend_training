@@ -11,7 +11,7 @@ function getAuthenticatedUser()
 {
     $headers = getallheaders();
 
-    // Normalize header keys (case-insensitive)
+    // Normalize header keys 
     $authorizationHeader = $headers['Authorization'] ?? $headers['authorization'] ?? null;
 
     if (!$authorizationHeader || !preg_match('/Bearer\s(\S+)/', $authorizationHeader, $matches)) {
