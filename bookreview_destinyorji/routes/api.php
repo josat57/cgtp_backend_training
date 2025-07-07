@@ -7,9 +7,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
 
 switch (true) {
-    // =====================
+    
     // AUTH ROUTES
-    // =====================
+   
     case $uri === '/register' && $method === 'POST':
         require_once __DIR__ . '/../controllers/AuthController.php';
         $rawInput = file_get_contents("php://input");
@@ -30,9 +30,9 @@ switch (true) {
         echo json_encode($response);
         break;
 
-    // =====================
+    
     // BOOK ROUTES
-    // =====================
+   
     case $uri === '/books' && $method === 'GET':
         require_once __DIR__ . '/../controllers/BookController.php';
         getAllBooks();
@@ -76,9 +76,9 @@ switch (true) {
         deleteBook($matches[1], $user);
         break;
 
-    // =====================
+    
     // REVIEW ROUTES
-    // =====================
+    
     case preg_match('#^/books/([a-zA-Z0-9]+)/reviews$#', $uri, $matches) && $method === 'POST':
         require_once __DIR__ . '/../controllers/ReviewController.php';
         $user = getAuthenticatedUser();
@@ -106,9 +106,9 @@ switch (true) {
         deleteReview($matches[1], $user);
         break;
 
-    // =====================
+    
     // ADMIN ROUTES
-    // =====================
+    
     case $uri === '/admin/users' && $method === 'GET':
         require_once __DIR__ . '/../controllers/AdminController.php';
         $user = getAuthenticatedUser();
@@ -142,9 +142,9 @@ switch (true) {
         deleteUser($matches[1]);
         break;
 
-    // =====================
+    
     // DEFAULT 404
-    // =====================
+    
     default:
         http_response_code(404);
         echo json_encode(['message' => 'Route not found']);
