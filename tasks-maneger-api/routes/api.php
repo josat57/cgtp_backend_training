@@ -22,8 +22,7 @@ function apiRoutes($route, $data, $method) {
             'tasks' => 'createTask', // POST /api/tasks - Create a new task (alias)
             'user' => 'createUser',
             'login' => 'user/findByEmail',
-            'register' => 'user/createUser',
-            'refresh-token' => 'user/refreshToken' // POST /api/refresh-token - Refresh an expired token
+            'register' => 'user/createUser'
         ],
         'PUT' => [
             'task' => 'updateTask', // PUT /api/task - Update a task (requires id in data)

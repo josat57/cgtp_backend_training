@@ -11,45 +11,6 @@ $queryString = $_SERVER["QUERY_STRING"] ?? '';
 // Remove query string from URI if present
 $uri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 
-// Check if the request is for a static file in the public directory
-$publicPath = __DIR__ . '/public' . $uri;
-if (file_exists($publicPath) && is_file($publicPath)) {
-    // Serve the static file
-    $extension = pathinfo($publicPath, PATHINFO_EXTENSION);
-    
-    // Set appropriate content type based on file extension
-    switch ($extension) {
-        case 'html':
-            header('Content-Type: text/html');
-            break;
-        case 'css':
-            header('Content-Type: text/css');
-            break;
-        case 'js':
-            header('Content-Type: application/javascript');
-            break;
-        case 'json':
-            header('Content-Type: application/json');
-            break;
-        case 'png':
-            header('Content-Type: image/png');
-            break;
-        case 'jpg':
-        case 'jpeg':
-            header('Content-Type: image/jpeg');
-            break;
-        case 'svg':
-            header('Content-Type: image/svg+xml');
-            break;
-        default:
-            header('Content-Type: text/plain');
-    }
-    
-    // Output the file contents
-    readfile($publicPath);
-    exit;
-}
-
 // Handle PUT, PATCH and DELETE requests that come as POST with _method parameter
 if ($method === 'POST' && isset($_POST['_method'])) {
     $method = strtoupper($_POST['_method']);
