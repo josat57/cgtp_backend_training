@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .response {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            background-color: #f1f1f1;
+        }
+        .tab.active {
+            background-color: white;
+            border-bottom: 2px solid white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tasks-container {
+            margin-top: 20px;
+        }
+        .task-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+        .task-item h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .task-item p {
+            margin: 5px 0;
+        }
+        .task-selector {
+            margin-bottom: 20px;
+        }
+        .actions {
+            margin-bottom: 15px;
+        }
+        .task-preview {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .danger {
+            background-color: #f44336;
+        }
+        .danger:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <h1>Task Manager API Test</h1>
+    
+    <div class="tabs">
+        <div class="tab active" onclick="openTab(event, 'register')">1. Register</div>
+        <div class="tab" onclick="openTab(event, 'login')">2. Login</div>
+        <div class="tab" onclick="openTab(event, 'create-task')">3. Create Task</div>
+        <div class="tab" onclick="openTab(event, 'view-tasks')">4. View Tasks</div>
+        <div class="tab" onclick="openTab(event, 'update-task')">5. Update Task</div>
+        <div class="tab" onclick="openTab(event, 'delete-task')">6. Delete Task</div>
+    </div>
+    
+    <div class="container">
+        <div id="register" class="tab-content active">
+            <div class="card">
+                <h2>Step 1: Register a New User</h2>
+                <form id="registerForm">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                    
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                    
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                    
+                    <button type="submit">Register</button>
+                </form>
+                <div class="response" id="registerResponse"></div>
+            </div>
+        </div>
+        
+        <div id="login" class="tab-content">
+            <div class="card">
+                <h2>Step 2: Login to Get JWT Token</h2>
+                <form id="loginForm">
+                    <label for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" name="email" required>
+                    
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" name="password" required>
+                    
+                    <button type="submit">Login</button>
+                </form>
+                <div class="response" id="loginResponse"></div>
+            </div>
+        </div>
+        
+        <div id="create-task" class="tab-content">
+            <div class="card">
+                <h2>Step 3: Create a Task</h2>
+                <form id="createTaskForm">
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" required>
+                    
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" rows="4" required></textarea>
+                    
+                    <label for="status">Status:</label>
+                    <select id="status" name="status">
+                        <option value="pending">Pending</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                    
+                    <label for="priority">Priority:</label>
+                    <select id="priority" name="priority">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                    
+                    <label for="dueDate">Due Date:</label>
+                    <input type="date" id="dueDate" name="due_date">
+                    
+                    <div>
+                        <label>API Endpoint:</label>
+                        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                            <label>
+                                <input type="radio" name="endpoint" value="/api/task" checked> /api/task
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit">Create Task</button>
+                </form>
+                <div class="response" id="createTaskResponse"></div>
+            </div>
+        </div>
+        
+        <div id="view-tasks" class="tab-content">
+            <div class="card">
+                <h2>Step 4: View Your Tasks</h2>
+                <div class="actions">
+                    <button id="refreshTasksBtn">Refresh Tasks</button>
+                </div>
+                <div id="tasksList" class="tasks-container">
+                    <p>No tasks loaded. Click Refresh Tasks to load your tasks.</p>
+                </div>
+                <div class="response" id="viewTasksResponse"></div>
+            </div>
+        </div>
+        
+        <div id="update-task" class="tab-content">
+            <div class="card">
+                <h2>Step 5: Update a Task</h2>
+                <div class="task-selector">
+                    <label for="updateTaskSelect">Select Task to Update:</label>
+                    <select id="updateTaskSelect">
+                        <option value="">-- Select a task --</option>
+                    </select>
+                    <button id="loadTaskForUpdateBtn">Load Task</button>
+                </div>
+                <form id="updateTaskForm" style="display: none;">
+                    <input type="hidden" id="updateTaskId" name="id">
+                    
+                    <label for="updateTitle">Title:</label>
+                    <input type="text" id="updateTitle" name="title" required>
+                    
+                    <label for="updateDescription">Description:</label>
+                    <textarea id="updateDescription" name="description" rows="4" required></textarea>
+                    
+                    <label for="updateStatus">Status:</label>
+                    <select id="updateStatus" name="status">
+                        <option value="pending">Pending</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                    
+                    <label for="updatePriority">Priority:</label>
+                    <select id="updatePriority" name="priority">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                    
+                    <label for="updateDueDate">Due Date:</label>
+                    <input type="date" id="updateDueDate" name="due_date">
+                    
+                    <button type="submit">Update Task</button>
+                </form>
+                <div class="response" id="updateTaskResponse"></div>
+            </div>
+        </div>
+        
+        <div id="delete-task" class="tab-content">
+            <div class="card">
+                <h2>Step 6: Delete a Task</h2>
+                <div class="task-selector">
+                    <label for="deleteTaskSelect">Select Task to Delete:</label>
+                    <select id="deleteTaskSelect">
+                        <option value="">-- Select a task --</option>
+                    </select>
+                </div>
+                <div class="task-preview" id="deleteTaskPreview" style="display: none;">
+                    <h3>Task to Delete:</h3>
+                    <div id="deleteTaskDetails"></div>
+                    <button id="confirmDeleteBtn" class="danger">Confirm Delete</button>
+                </div>
+                <div class="response" id="deleteTaskResponse"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Store the JWT token and tasks data
+        let jwtToken = '';
+        let userTasks = [];
+        
+        // Tab functionality
+        function openTab(evt, tabName) {
+            const tabs = document.getElementsByClassName('tab');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].className = tabs[i].className.replace(' active', '');
+            }
+            
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].className = tabContents[i].className.replace(' active', '');
+            }
+            
+            document.getElementById(tabName).className += ' active';
+            evt.currentTarget.className += ' active';
+            
+            // If switching to view tasks tab, refresh tasks
+            if (tabName === 'view-tasks' && jwtToken) {
+                fetchTasks();
+            }
+            
+            // If switching to update or delete task tab, refresh task dropdowns
+            if ((tabName === 'update-task' || tabName === 'delete-task') && jwtToken) {
+                populateTaskDropdowns();
+            }
+        }
+        
+        // Helper function to make API requests
+        async function makeRequest(url, method, data, token = null) {
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: data ? JSON.stringify(data) : undefined
+            };
+            
+            if (token) {
+                options.headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            try {
+                const response = await fetch(url, options);
+                return await response.json();
+            } catch (error) {
+                return { status: 'error', message: `Request failed: ${error.message}` };
+            }
+        }
+        
+        // Format date for display
+        function formatDate(dateString) {
+            if (!dateString) return 'Not set';
+            const date = new Date(dateString);
+            return date.toLocaleDateString();
+        }
+        
+        // Fetch all tasks for the user
+        async function fetchTasks() {
+            if (!jwtToken) {
+                document.getElementById('viewTasksResponse').textContent = 'Error: You must login first to get a JWT token';
+                return;
+            }
+            
+            const responseDiv = document.getElementById('viewTasksResponse');
+            responseDiv.textContent = 'Loading tasks...';
+            
+            const response = await makeRequest('/api/task', 'GET', null, jwtToken);
+            responseDiv.textContent = '';
+            
+            if (response.status === 'success' && response.data && response.data.tasks) {
+                userTasks = response.data.tasks;
+                displayTasks(userTasks);
+                populateTaskDropdowns();
+            } else {
+                document.getElementById('tasksList').innerHTML = '<p>No tasks found or error loading tasks.</p>';
+                responseDiv.textContent = JSON.stringify(response, null, 2);
+            }
+        }
+        
+        // Display tasks in the tasks list
+        function displayTasks(tasks) {
+            const tasksContainer = document.getElementById('tasksList');
+            
+            if (tasks.length === 0) {
+                tasksContainer.innerHTML = '<p>No tasks found.</p>';
+                return;
+            }
+            
+            let html = '';
+            tasks.forEach(task => {
+                html += `
+                <div class="task-item" data-id="${task._id}">
+                    <h3>${task.title}</h3>
+                    <p><strong>Description:</strong> ${task.description}</p>
+                    <p><strong>Status:</strong> ${task.status}</p>
+                    <p><strong>Priority:</strong> ${task.priority}</p>
+                    <p><strong>Due Date:</strong> ${formatDate(task.expiry_date)}</p>
+                    <p><strong>Created:</strong> ${formatDate(task.created_at)}</p>
+                </div>
+                `;
+            });
+            
+            tasksContainer.innerHTML = html;
+        }
+        
+        // Populate task dropdowns for update and delete
+        function populateTaskDropdowns() {
+            const updateSelect = document.getElementById('updateTaskSelect');
+            const deleteSelect = document.getElementById('deleteTaskSelect');
+            
+            // Clear existing options except the first one
+            updateSelect.innerHTML = '<option value="">-- Select a task --</option>';
+            deleteSelect.innerHTML = '<option value="">-- Select a task --</option>';
+            
+            userTasks.forEach(task => {
+                const option = document.createElement('option');
+                option.value = task._id;
+                option.textContent = task.title;
+                
+                const optionClone = option.cloneNode(true);
+                
+                updateSelect.appendChild(option);
+                deleteSelect.appendChild(optionClone);
+            });
+        }
+        
+        // Load task details for update
+        function loadTaskForUpdate(taskId) {
+            const task = userTasks.find(t => t._id === taskId);
+            if (!task) return;
+            
+            document.getElementById('updateTaskId').value = task._id;
+            document.getElementById('updateTitle').value = task.title;
+            document.getElementById('updateDescription').value = task.description;
+            document.getElementById('updateStatus').value = task.status;
+            document.getElementById('updatePriority').value = task.priority;
+            
+            if (task.expiry_date) {
+                // Format date for input field (YYYY-MM-DD)
+                const date = new Date(task.expiry_date);
+                const formattedDate = date.toISOString().split('T')[0];
+                document.getElementById('updateDueDate').value = formattedDate;
+            } else {
+                document.getElementById('updateDueDate').value = '';
+            }
+            
+            document.getElementById('updateTaskForm').style.display = 'block';
+        }
+        
+        // Load task details for delete preview
+        function loadTaskForDelete(taskId) {
+            const task = userTasks.find(t => t._id === taskId);
+            if (!task) return;
+            
+            const detailsHtml = `
+                <p><strong>Title:</strong> ${task.title}</p>
+                <p><strong>Description:</strong> ${task.description}</p>
+                <p><strong>Status:</strong> ${task.status}</p>
+                <p><strong>Priority:</strong> ${task.priority}</p>
+                <p><strong>Due Date:</strong> ${formatDate(task.expiry_date)}</p>
+            `;
+            
+            document.getElementById('deleteTaskDetails').innerHTML = detailsHtml;
+            document.getElementById('deleteTaskPreview').style.display = 'block';
+            
+            // Set the task ID as a data attribute on the confirm button
+            document.getElementById('confirmDeleteBtn').setAttribute('data-task-id', task._id);
+        }
+        
+        // Register form submission
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const responseDiv = document.getElementById('registerResponse');
+            responseDiv.textContent = 'Registering...';
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            };
+            
+            const response = await makeRequest('/register', 'POST', formData);
+            responseDiv.textContent = JSON.stringify(response, null, 2);
+            
+            if (response.status === 'success') {
+                // Auto-fill login form
+                document.getElementById('loginEmail').value = formData.email;
+                document.getElementById('loginPassword').value = formData.password;
+                
+                // Switch to login tab
+                openTab({ currentTarget: document.getElementsByClassName('tab')[1] }, 'login');
+            }
+        });
+        
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const responseDiv = document.getElementById('loginResponse');
+            responseDiv.textContent = 'Logging in...';
+            
+            const formData = {
+                email: document.getElementById('loginEmail').value,
+                password: document.getElementById('loginPassword').value
+            };
+            
+            const response = await makeRequest('/login', 'POST', formData);
+            responseDiv.textContent = JSON.stringify(response, null, 2);
+            
+            if (response.status === 'success' && response.data && response.data.token) {
+                jwtToken = response.data.token;
+                
+                // Switch to create task tab
+                openTab({ currentTarget: document.getElementsByClassName('tab')[2] }, 'create-task');
+            }
+        });
+        
+        // Create task form submission
+        document.getElementById('createTaskForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const responseDiv = document.getElementById('createTaskResponse');
+            
+            if (!jwtToken) {
+                responseDiv.textContent = 'Error: You must login first to get a JWT token';
+                return;
+            }
+            
+            responseDiv.textContent = 'Creating task...';
+            
+            const formData = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                status: document.getElementById('status').value,
+                priority: document.getElementById('priority').value,
+                expiry_date: document.getElementById('dueDate').value || null
+            };
+            
+            // Get selected endpoint
+            const endpoint = document.querySelector('input[name="endpoint"]:checked').value;
+            const response = await makeRequest(endpoint, 'POST', formData, jwtToken);
+            
+            responseDiv.textContent = JSON.stringify(response, null, 2);
+            
+            if (response.status === 'success') {
+                // Clear form
+                document.getElementById('createTaskForm').reset();
+                
+                // Refresh tasks
+                fetchTasks();
+                
+                // Switch to view tasks tab
+                setTimeout(() => {
+                    openTab({ currentTarget: document.getElementsByClassName('tab')[3] }, 'view-tasks');
+                }, 1000);
+            }
+        });
+        
+        // Refresh tasks button
+        document.getElementById('refreshTasksBtn').addEventListener('click', fetchTasks);
+        
+        // Load task for update button
+        document.getElementById('loadTaskForUpdateBtn').addEventListener('click', function() {
+            const taskId = document.getElementById('updateTaskSelect').value;
+            if (taskId) {
+                loadTaskForUpdate(taskId);
+            }
+        });
+        
+        // Update task form submission
+        document.getElementById('updateTaskForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const responseDiv = document.getElementById('updateTaskResponse');
+            
+            if (!jwtToken) {
+                responseDiv.textContent = 'Error: You must login first to get a JWT token';
+                return;
+            }
+            
+            responseDiv.textContent = 'Updating task...';
+            
+            const taskId = document.getElementById('updateTaskId').value;
+            const formData = {
+                id: taskId,
+                title: document.getElementById('updateTitle').value,
+                description: document.getElementById('updateDescription').value,
+                status: document.getElementById('updateStatus').value,
+                priority: document.getElementById('updatePriority').value,
+                expiry_date: document.getElementById('updateDueDate').value || null
+            };
+            
+            const response = await makeRequest(`/api/task`, 'PUT', formData, jwtToken);
+            responseDiv.textContent = JSON.stringify(response, null, 2);
+            
+            if (response.status === 'success') {
+                // Refresh tasks
+                fetchTasks();
+                
+                // Hide the form
+                document.getElementById('updateTaskForm').style.display = 'none';
+                
+                // Reset the select
+                document.getElementById('updateTaskSelect').value = '';
+            }
+        });
+        
+        // Delete task select change
+        document.getElementById('deleteTaskSelect').addEventListener('change', function() {
+            const taskId = this.value;
+            if (taskId) {
+                loadTaskForDelete(taskId);
+            } else {
+                document.getElementById('deleteTaskPreview').style.display = 'none';
+            }
+        });
+        
+        // Confirm delete button
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
+            const responseDiv = document.getElementById('deleteTaskResponse');
+            const taskId = this.getAttribute('data-task-id');
+            
+            if (!jwtToken) {
+                responseDiv.textContent = 'Error: You must login first to get a JWT token';
+                return;
+            }
+            
+            if (!taskId) {
+                responseDiv.textContent = 'Error: No task selected';
+                return;
+            }
+            
+            responseDiv.textContent = 'Deleting task...';
+            
+            const response = await makeRequest(`/api/task`, 'DELETE', { id: taskId }, jwtToken);
+            responseDiv.textContent = JSON.stringify(response, null, 2);
+            
+            if (response.status === 'success') {
+                // Refresh tasks
+                fetchTasks();
+                
+                // Hide the preview
+                document.getElementById('deleteTaskPreview').style.display = 'none';
+                
+                // Reset the select
+                document.getElementById('deleteTaskSelect').value = '';
+            }
+        });
+    </script>
+</body>
+</html>

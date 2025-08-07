@@ -1,0 +1,23 @@
+{
+    "name": "task-manager/api",
+    "description": "Task Manager API with MongoDB",
+    "type": "project",
+    "require": {
+        "mongodb/mongodb": "^2.0.0",
+        "firebase/php-jwt": "^6.4.0"
+    },
+    "authors": [
+        {
+            "name": "orji destiny",
+            "email": "destinyorji18@gmail.com",
+            "role": "backend developer"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "config/db.php",
+            "helpers/response.php",
+            "middleware/AuthMiddleware.php"
+        ]
+    }
+}
