@@ -1,0 +1,14 @@
+{
+    "name": "hp/book_review_backend",
+    "description": "A book review API",
+    "require": {
+        "mongodb/mongodb": "^2.1",
+        "firebase/php-jwt": "^6.11"
+    },
+    "authors": [
+        {
+            "name": "Adams Rapahel",
+            "email": "adamsraphaelk1ng@gmail.com"
+        }
+    ]
+}

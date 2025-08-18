@@ -1,0 +1,9 @@
+# Ignore Composer dependencies
+/vendor/
+
+# Ignore environment/config files
+api/config/config.php
+
+# Ignore system files
+.DS_Store
+Thumbs.db
