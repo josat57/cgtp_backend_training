@@ -3,7 +3,8 @@
     "description": "A book review API",
     "require": {
         "mongodb/mongodb": "^2.1",
-        "firebase/php-jwt": "^6.11"
+        "firebase/php-jwt": "^6.11",
+        "phpmailer/phpmailer": "^6.10"
     },
     "authors": [
         {
