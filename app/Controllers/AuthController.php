@@ -16,13 +16,12 @@ class AuthController {
     public function register() {
         global $pdo;
 
-        // Get POST data
-        $data = $_POST; // or json_decode(file_get_contents('php://input'), true) if using JSON
+        $data = $_POST; // or json_decode(file_get_contents('php://input'), true)
         $name = $data['name'] ?? '';
         $email = $data['email'] ?? '';
         $password = $data['password'] ?? '';
         $role_name = $data['role'] ?? 'reviewer';
-        $method = $data['verification_method'] ?? 'link'; // 'link' or 'otp'
+        $method = $data['verification_method'] ?? 'link';
 
         if (empty($name) || empty($email) || empty($password)) {
             http_response_code(400);
@@ -65,27 +64,16 @@ class AuthController {
             $mail->isHTML(true);
 
             if ($method === 'otp') {
-                // ---------------- OTP ----------------
                 $otp = rand(100000, 999999);
-
-                $stmt = $pdo->prepare("
-                    INSERT INTO users (name, email, password, role_id, email_verified, email_otp)
-                    VALUES (?, ?, ?, ?, 0, ?)
-                ");
+                $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role_id, email_verified, email_otp) VALUES (?, ?, ?, ?, 0, ?)");
                 $stmt->execute([$name, $email, $hashedPassword, $role_id, $otp]);
                 $userId = $pdo->lastInsertId();
 
                 $mail->Subject = 'Your Verification OTP';
                 $mail->Body = "Hi $name,<br><br>Your email verification OTP is: <b>$otp</b>";
-
             } else {
-                // ---------------- Link ----------------
                 $token = bin2hex(random_bytes(32));
-
-                $stmt = $pdo->prepare("
-                    INSERT INTO users (name, email, password, role_id, email_verified, verification_token)
-                    VALUES (?, ?, ?, ?, 0, ?)
-                ");
+                $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role_id, email_verified, verification_token) VALUES (?, ?, ?, ?, 0, ?)");
                 $stmt->execute([$name, $email, $hashedPassword, $role_id, $token]);
                 $userId = $pdo->lastInsertId();
 
@@ -96,7 +84,7 @@ class AuthController {
 
             $mail->send();
 
-            // ---------------- Logging ----------------
+            // Log registration
             $stmtLog = $pdo->prepare("INSERT INTO logs (user_id, action) VALUES (?, ?)");
             $stmtLog->execute([$userId, "Registered new account using $method"]);
 
@@ -145,7 +133,11 @@ class AuthController {
             return;
         }
 
-        // ---------------- JWT ----------------
+        // ---------------- JWT with role name ----------------
+        $stmtRole = $pdo->prepare("SELECT name FROM roles WHERE id = ?");
+        $stmtRole->execute([$user['role_id']]);
+        $role = $stmtRole->fetchColumn();
+
         $payload = [
             'iat' => time(),
             'exp' => time() + (60*60),
@@ -153,7 +145,7 @@ class AuthController {
                 'id' => $user['id'],
                 'name' => $user['name'],
                 'email' => $user['email'],
-                'role_id' => $user['role_id']
+                'role' => $role
             ]
         ];
 
@@ -166,17 +158,16 @@ class AuthController {
         echo json_encode(['success' => true, 'token' => $jwt]);
     }
 
-    // ---------------- Verify Email OTP ----------------
+    // ---------------- Verify Email OTP / Link ----------------
     public function verifyEmail() {
         global $pdo;
 
         $data = $_POST;
         $userId = $data['user_id'] ?? null;
         $otp = $data['otp'] ?? null;
-        $token = $data['token'] ?? null; // if link method
+        $token = $data['token'] ?? null;
 
         if ($otp) {
-            // OTP verification
             $stmt = $pdo->prepare("SELECT email_otp FROM users WHERE id = ?");
             $stmt->execute([$userId]);
             $user = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -191,7 +182,6 @@ class AuthController {
             $stmt->execute([$userId]);
 
         } elseif ($token) {
-            // Link verification
             $stmt = $pdo->prepare("SELECT id FROM users WHERE verification_token = ?");
             $stmt->execute([$token]);
             $user = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -210,7 +200,7 @@ class AuthController {
             return;
         }
 
-        // Log action
+        // Log verification
         $stmtLog = $pdo->prepare("INSERT INTO logs (user_id, action) VALUES (?, ?)");
         $stmtLog->execute([$user['id'] ?? $userId, "Verified email"]);
 
