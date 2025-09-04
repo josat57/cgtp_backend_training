@@ -1,18 +1,18 @@
-User Management API
+#User Management API
 Author
 
 Adams Raphael Muzan
 Graduate Trainee, 2025 Graduate Trainee Program
 Cinfores Ltd.
 
-📌 Project Overview
+##📌 Project Overview
 
 This project implements a User Management API for handling user registration, authentication, role assignment, and access management. It provides a foundation for secure role-based access control within an application.
 
 The API is built with PHP and uses a MySQL database (via phpMyAdmin) for data persistence. JWT (JSON Web Token) is used for authentication and authorization.
 
 
-✨ Key Features
+##✨ Key Features
 
 Users can register as either Reviewer, Author, or Super Admin.
 
@@ -30,7 +30,7 @@ Roles are stored in the database under the column role_id, with assigned numeric
 
 3 → Super Admin
 
-⚙️ Setup Instructions
+##⚙️ Setup Instructions
 Requirements
 
 PHP >= 8.0
@@ -41,20 +41,20 @@ MySQL database (phpMyAdmin recommended)
 
 Web server (Apache/Nginx or PHP built-in server)
 
-Installation
+##Installation
 
-Clone the repository:
+###Clone the repository:
 
 git clone <repo-url>
 cd user-management-api
 
 
-Install dependencies:
+###Install dependencies:
 
 composer install
 
 
-Configure the database in config/db.php:
+###Configure the database in config/db.php:
 
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
@@ -68,9 +68,9 @@ Start the server:
 
 php -S localhost:8000 -t public
 
-🔑 Endpoints
-Method	Endpoint	Description	Role Access
-POST	/auth/register	Register a new user (Reviewer, Author, or Super Admin)	Public
+##🔑 Endpoints
+###Method	Endpoint	Description	Role Access
+* POST	/auth/register	Register a new user (Reviewer, Author, or Super Admin)	Public
 POST	/auth/login	Authenticate user and return JWT	Public
 POST	/auth/verify-email	Verify email via OTP or link	Public
 GET	/users	Get list of all users	Super Admin
