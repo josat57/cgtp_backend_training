@@ -35,7 +35,7 @@ class BookController {
 		return $decoded; // contains sub (user_id) and role
 	}
 
-	// POST /api/books (author only) - multipart upload with fields: title, description, file
+	// POST /index.php/books (author only) - multipart upload with fields: title, description, file
 	public function uploadBook() {
 		$decoded = $this->requireAuth();
 		if (($decoded->role ?? '') !== 'author') send_json(['success' => false, 'error' => 'Only authors can upload books'], 403);
@@ -68,14 +68,14 @@ class BookController {
 		send_json(['success' => true, 'book_id' => $bookId, 'file_path' => $fileUrl], 201);
 	}
 
-	// GET /api/books - list all books (for browsing/reading)
+	// GET /index.php/books - list all books (for browsing/reading)
 	public function listBooks() {
 		$this->requireAuth();
 		$rows = $this->bookModel->listAll();
 		send_json(['success' => true, 'books' => $rows]);
 	}
 
-	// GET /api/books/mine (author) - list authored books
+	// GET /index.php/books/mine (author) - list authored books
 	public function listMyBooks() {
 		$decoded = $this->requireAuth();
 		if (($decoded->role ?? '') !== 'author') send_json(['success' => false, 'error' => 'Only authors can list their books'], 403);
@@ -83,7 +83,7 @@ class BookController {
 		send_json(['success' => true, 'books' => $rows]);
 	}
 
-	// POST /api/books/{id}/reviews (reviewer) - add comment
+	// POST /index.php/books/{id}/reviews (reviewer) - add comment
 	public function addReview($bookId) {
 		$decoded = $this->requireAuth();
 		if (($decoded->role ?? '') !== 'reviewer') send_json(['success' => false, 'error' => 'Only reviewers can comment'], 403);
@@ -96,14 +96,14 @@ class BookController {
 		send_json(['success' => true, 'message' => 'Review added']);
 	}
 
-	// GET /api/books/{id}/reviews - list reviews on a book
+	// GET /index.php/books/{id}/reviews - list reviews on a book
 	public function listBookReviews($bookId) {
 		$this->requireAuth();
 		$rows = $this->reviewModel->listByBook((int)$bookId);
 		send_json(['success' => true, 'reviews' => $rows]);
 	}
 
-	// GET /api/reviews/mine (reviewer) - reviews created by me
+	// GET /index.php/reviews/mine (reviewer) - reviews created by me
 	public function listMyReviews() {
 		$decoded = $this->requireAuth();
 		if (($decoded->role ?? '') !== 'reviewer') send_json(['success' => false, 'error' => 'Only reviewers can view this'], 403);
@@ -111,7 +111,7 @@ class BookController {
 		send_json(['success' => true, 'reviews' => $rows]);
 	}
 
-	// POST /api/books/{id}/invite (author) - invite reviewer by email
+	// POST /index.php/books/{id}/invite (author) - invite reviewer by email
 	public function inviteReviewer($bookId) {
 		$decoded = $this->requireAuth();
 		if (($decoded->role ?? '') !== 'author') send_json(['success' => false, 'error' => 'Only authors can invite reviewers'], 403);
@@ -126,7 +126,7 @@ class BookController {
 		send_json(['success' => true, 'message' => 'Invitation created', 'token' => $token]);
 	}
 
-	// GET /api/books/{id}/invitations (author) - list invitations
+	// GET /index.php/books/{id}/invitations (author) - list invitations
 	public function listInvitations($bookId) {
 		$decoded = $this->requireAuth();
 		if (($decoded->role ?? '') !== 'author') send_json(['success' => false, 'error' => 'Only authors can view invitations'], 403);

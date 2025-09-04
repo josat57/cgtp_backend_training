@@ -4,6 +4,8 @@ require_once __DIR__ . '/../helpers/jwt.php';
 require_once __DIR__ . '/../helpers/utility.php';
 require_once __DIR__ . '/../models/User.php';
 
+//this is for the profile (to edit profile and add profile picture/ avatar)
+
 class UserController {
     private $conn;
     private $userModel;
@@ -15,7 +17,7 @@ class UserController {
         $this->cfg = require __DIR__ . '/../config/config.php';
     }
 
-    // GET /api/users/me
+    // GET /index.php/users/me
     public function me() {
         $token = get_bearer_token_from_header();
         if (!$token) send_json(['success' => false, 'error' => 'Missing token'], 401);
@@ -31,7 +33,7 @@ class UserController {
         send_json(['success' => true, 'user' => $user]);
     }
 
-    // PUT /api/users/me - update name
+    // PUT /index.php/users/me - update name
     public function update() {
         $token = get_bearer_token_from_header();
         if (!$token) send_json(['success' => false, 'error' => 'Missing token'], 401);
@@ -54,7 +56,7 @@ class UserController {
         }
     }
 
-    // POST /api/users/me/avatar - multipart/form-data upload
+    // POST /index.php/users/me/avatar - multipart/form-data upload
     public function uploadAvatar() {
         $token = get_bearer_token_from_header();
         if (!$token) send_json(['success' => false, 'error' => 'Missing token'], 401);

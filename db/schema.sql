@@ -1,5 +1,4 @@
 -- MySQL schema for Book Review API
--- Run in your MySQL instance (e.g., via phpMyAdmin or mysql CLI)
 -- Ensure database `book_review_api` exists or adjust below
 
 CREATE DATABASE IF NOT EXISTS `book_review_api` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

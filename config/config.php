@@ -1,12 +1,12 @@
 <?php
-// Basic configuration. Edit values for your environment.
+// Basic configuration.
 return [
     'db_host' => 'localhost',
     'db_user' => 'root',
     'db_pass' => '',
     'db_name' => 'book_review_api',
 
-    // JWT config - change secret to a long random string in production
+    // JWT config 
     'jwt_secret' => 'REPLACE_WITH_A_STRONG_SECRET_KEY',
     'jwt_issuer' => 'yourdomain.local', // optional issuer
     'jwt_exp' => 3600, // token lifetime in seconds (1 hour)
@@ -29,5 +29,5 @@ return [
 
     // Uploads
     'upload_dir' => __DIR__ . '/../public/uploads',
-    'upload_url' => '/public/uploads' // adjust to your webserver setup
+    'upload_url' => '/public/uploads' 
 ];

@@ -20,7 +20,7 @@ class AuthController {
 		$this->cfg = require __DIR__ . '/../config/config.php';
 	}
 
-	// POST /api/auth/register
+	// POST /index.php/auth/register
 	public function register() {
 		$data = get_json_input();
 		$fullname = trim($data['fullname'] ?? '');
@@ -72,7 +72,7 @@ class AuthController {
 		send_json(['success' => true, 'message' => 'User created. Verification OTP sent to email.'], 201);
 	}
 
-	// POST /api/auth/verify-otp
+	// POST /index.php/auth/verify-otp
 	public function verifyOtp() {
 		$data = get_json_input();
 		$email = strtolower(trim($data['email'] ?? ''));
@@ -101,7 +101,7 @@ class AuthController {
 		send_json(['success' => false, 'error' => 'Invalid or expired OTP'], 400);
 	}
 
-	// POST /api/auth/login
+	// POST /index.php/auth/login
 	public function login() {
 		$data = get_json_input();
 		$email = strtolower(trim($data['email'] ?? ''));
@@ -136,7 +136,7 @@ class AuthController {
 		send_json(['success' => true, 'token' => $token, 'user' => $userData]);
 	}
 
-	// POST /api/auth/logout
+	// POST /index.php/auth/logout
 	public function logout() {
 		// Get token from header, decode to get exp, then store hashed token in blacklist
 		$token = get_bearer_token_from_header();
