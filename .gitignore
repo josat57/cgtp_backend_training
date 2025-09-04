@@ -1,8 +1,9 @@
 # Ignore Composer dependencies
 /vendor/
 
-# Ignore environment/config files
-api/config/config.php
+# Ignore old folders and files
+/api/
+/public/books
 
 # Ignore system files
 .DS_Store
